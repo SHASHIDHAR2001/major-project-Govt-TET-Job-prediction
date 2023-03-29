@@ -5,6 +5,7 @@ import numpy as np
 from sklearn import preprocessing
 import lightgbm as lgb
 from sklearn.metrics import accuracy_score
+
 d = pd.read_csv("data.csv")
 cat_dict={}
 dist_dict={}
@@ -27,37 +28,36 @@ clf = lgb.LGBMClassifier()
 clf.fit(x,y)
 Y = clf.predict(x)
 accuracy=accuracy_score(y, Y)
+
 def app():
-        name=st.text_input("Enter your name")
-        roll_num=st.text_input("Enter your Roll Number")
-        gender=st.selectbox("Choose Gender", options=[" ","Female","Male"])
-        if gender=="Female":
-            gender=0
-        if gender=="Male":
-            gender=1
-        category=st.selectbox("Choose suitable Category", options=[" "]+key)
-        if category!=" ":
-            category=cat_dict[category]
-        merit_score=st.number_input('Insert Merit Score')
-        district=st.selectbox("Choose District",options=[" "]+dist)
-        if district!=" ":
-            district=dist_dict[district]
-        subject=st.selectbox("Choose Subject",options=[" "]+sub)
-        if subject!=" ":
-            subject=sub_dict[subject]
-        if st.button("Predict"):
-            values=np.array([[gender,category,merit_score,district,subject]])
-            try:
-                result=clf.predict(values)
-            except:
-                st.warning("Enter correct Data")
-            result='ok'
-            if result=='No':
-                #st.title("Better Luck next time")
+    name=st.text_input("Enter your name")
+    roll_num=st.text_input("Enter your Roll Number")
+    gender=st.selectbox("Choose Gender", options=[" ","Female","Male"])
+    if gender=="Female":
+        gender=0
+    if gender=="Male":
+        gender=1
+    category=st.selectbox("Choose suitable Category", options=[" "]+key)
+    if category!=" ":
+        category=cat_dict[category]
+    merit_score=st.number_input('Insert Merit Score')
+    district=st.selectbox("Choose District",options=[" "]+dist)
+    if district!=" ":
+        district=dist_dict[district]
+    subject=st.selectbox("Choose Subject",options=[" "]+sub)
+    if subject!=" ":
+        subject=sub_dict[subject]
+    if st.button("Predict"):
+        values=np.array([[gender,category,merit_score,district,subject]])
+        try:
+            result=clf.predict(values)
+            if result[0]=='No':
                 st.markdown("""<h2 style='color:red'>Better Luck next time</h2>""",unsafe_allow_html=True)
-            if result=='Yes':
-                #st.title("Congratulations You will be eligible")
+            if result[0]=='Yes':
                 st.markdown("""<h2 style='color:green'>Congratulations You will be eligible</h2>""",unsafe_allow_html=True)
                 st.balloons()
+        except:
+            st.warning("Enter correct Data")
+
 if __name__=="__main__":
     app()
